@@ -22,27 +22,7 @@ public class ErrorMsgUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ErrorMsgUtil.class);
 
 
-    private static final String LINE_SEPARATOR = "\n";
 
-    private static final String SQL_SEPARATOR = ";";
-
-    /**
-     * @Description: 获取字符串共有多少行
-     * @Param: * @param str:
-     * @Return: * @return: java.lang.Integer
-     **/
-    public static List<String> lineNum(String str) {
-        return Arrays.asList(str.split(LINE_SEPARATOR));
-    }
-
-    /**
-     * @Description: sql 分割
-     * @Param: * @param command:
-     * @Return: * @return: java.util.List<java.lang.String>
-     **/
-    public static List<String> split(String command) {
-        return Arrays.asList(command.split(SQL_SEPARATOR));
-    }
 
     /**
      * @Description: 解析错误信息的具体位置
@@ -73,7 +53,7 @@ public class ErrorMsgUtil {
     public static ErrorColumn parseErrorMsgLocation(String sql, String executeSql , String msg) {
         // 计算每个sql在整个待执行sql的第几个位置
         Map<Integer, Integer> locationMap = new HashMap<>();
-        List<String> split = split(sql);
+        List<String> split = CommonUtil.split(sql);
         for (int i = 0; i < split.size(); i++) {
             String currentSql = split.get(1);
             Integer preLine = i == 0 ? parsePreBlankNum(currentSql) : Math.addExact(locationMap.get(i -1), parsePreBlankNum(currentSql));
@@ -87,7 +67,7 @@ public class ErrorMsgUtil {
     *  @Return: * @return: int
     **/
     private static int parsePreBlankNum(String currentSql) {
-        List<String> strings = lineNum(currentSql);
+        List<String> strings = CommonUtil.lineNum(currentSql);
         List<String> collect = strings.stream().filter(StringUtils::isBlank).collect(Collectors.toList());
         return collect.size();
     }
